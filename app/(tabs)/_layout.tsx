@@ -12,6 +12,8 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { Feather, FontAwesome } from "@expo/vector-icons";
+import { ReceiptText } from "lucide-react-native";
 
 const Tab = createBottomTabNavigator();
 
@@ -19,11 +21,35 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme == "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Tab.Navigator screenOptions={{ headerShown: false }}>
-        <Tab.Screen name="home" component={Home} />
-        <Tab.Screen name="past-rides" component={PastRides} />
-        <Tab.Screen name="account" component={Account} />
+        <Tab.Screen
+          name="Home"
+          component={Home}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Feather name="home" color={color} size={size} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Past Rides"
+          component={PastRides}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <ReceiptText color={color} size={size} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Account"
+          component={Account}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Feather name="user" color={color} size={size} />
+            ),
+          }}
+        />
       </Tab.Navigator>
     </ThemeProvider>
   );
