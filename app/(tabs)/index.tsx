@@ -1,6 +1,12 @@
-import { StyleSheet, Text, TextInput, useColorScheme, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  useColorScheme,
+  View,
+} from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import * as Location from "expo-location";
 import "../../assets/map_styles/dark-style";
 import darkMap from "../../assets/map_styles/dark-style";
@@ -10,6 +16,22 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import { LinearGradient } from "expo-linear-gradient";
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetBackgroundProps,
+} from "@gorhom/bottom-sheet";
+import MyBottomSheet from "@/components/navigation/BottomSheet";
+
+const mostFrequentRides = [
+  { from: "Rua tal, 2", to: "Rua do Fulano, 2522", key: 0 },
+  { from: "Rua do Fulano, 2522", to: "Rua tal 2", key: 1 },
+  { from: "Rua tal, 2", to: "Rua do Fulano, 2522", key: 2 },
+  { from: "Rua do Fulano, 2522", to: "Rua tal 2", key: 3 },
+];
+
 export default function Home() {
   const colorScheme = useColorScheme();
   const [location, setLocation] = useState<Location.LocationObject | null>(
@@ -17,6 +39,14 @@ export default function Home() {
   );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [input, onChangeInput] = React.useState("");
+
+  // ref
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  // callbacks
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -50,7 +80,7 @@ export default function Home() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <View style={styles.container}>
+      <ThemedView style={styles.container}>
         {initialRegion && (
           <MapView
             provider={PROVIDER_GOOGLE}
@@ -70,43 +100,92 @@ export default function Home() {
         )}
 
         <View className="px-10 py-20 gap-2">
-          <Text
-            style={{
-              color:
-                colorScheme === "dark"
-                  ? DarkTheme.colors.text
-                  : DefaultTheme.colors.text,
-              fontWeight: "900",
-            }}
-            className="text-2xl"
-          >
+          <ThemedText type="title" className="text-3xl">
             Where do you want to go?
-          </Text>
-          <TextInput
-            onChangeText={onChangeInput}
-            value={input}
-            placeholder="Type any address here"
-            placeholderTextColor={
-              colorScheme === "dark"
-                ? DarkTheme.colors.text
-                : DefaultTheme.colors.text
-            }
-            keyboardType="default"
-            className="h-14 rounded-full px-5 border-gray-400 border-4"
-            style={{
-              backgroundColor:
-                colorScheme === "dark"
-                  ? DarkTheme.colors.card
-                  : DefaultTheme.colors.card,
-              color:
+          </ThemedText>
+          <LinearGradient
+            className="p-1"
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0.7, y: 0 }}
+            style={{ borderRadius: 9999 }}
+            colors={["#AE0AF2", "#534AF0"]}
+          >
+            <TextInput
+              onChangeText={onChangeInput}
+              value={input}
+              placeholder="Type any address here"
+              placeholderTextColor={
                 colorScheme === "dark"
                   ? DarkTheme.colors.text
-                  : DefaultTheme.colors.text,
-            }}
-            
-          />
+                  : DefaultTheme.colors.text
+              }
+              keyboardType="default"
+              className="h-14 rounded-full px-5"
+              style={{
+                backgroundColor:
+                  colorScheme === "dark"
+                    ? DarkTheme.colors.card
+                    : DefaultTheme.colors.card,
+                color:
+                  colorScheme === "dark"
+                    ? DarkTheme.colors.text
+                    : DefaultTheme.colors.text,
+              }}
+            />
+          </LinearGradient>
         </View>
-      </View>
+        <BottomSheet
+          ref={bottomSheetRef}
+          onChange={handleSheetChanges}
+          style={styles.contentContainer}
+          snapPoints={["20%", "50%"]}
+          backgroundStyle={{
+            backgroundColor:
+              colorScheme === "dark"
+                ? DarkTheme.colors.background
+                : DefaultTheme.colors.background,
+            borderRadius: 35,
+          }}
+          handleIndicatorStyle={{
+            backgroundColor:
+              colorScheme === "dark"
+                ? DefaultTheme.colors.background
+                : DarkTheme.colors.background,
+
+            width: 100,
+          }}
+          handleStyle={{
+            width: 200,
+            height: 30,
+            paddingTop: 20,
+            paddingBottom: 20,
+          }}
+        >
+          <ThemedView>
+            <BottomSheetView>
+              <ThemedText type="title" className="px-4 pb-5">
+                Most frequent rides
+              </ThemedText>
+              <View className="flex w-screen px-4 flex-row flex-wrap gap-5">
+                {mostFrequentRides.map((ride) => (
+                  <LinearGradient
+                    className="p-0.5"
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0.7, y: 0 }}
+                    style={{ borderRadius: 6 }}
+                    colors={["#AE0AF2", "#534AF0"]}
+                  >
+                    <ThemedView key={ride.key} className="p-2 flex-grow rounded-md">
+                      <ThemedText>{ride.from}</ThemedText>
+                      <ThemedText>{ride.to}</ThemedText>
+                    </ThemedView>
+                  </LinearGradient>
+                ))}
+              </View>
+            </BottomSheetView>
+          </ThemedView>
+        </BottomSheet>
+      </ThemedView>
     </ThemeProvider>
   );
 }
@@ -119,5 +198,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     position: "absolute",
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: "center",
+    borderWidth: 0.5,
+    borderColor: "#555",
+    borderRadius: 35,
   },
 });
