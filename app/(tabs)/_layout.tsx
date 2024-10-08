@@ -1,8 +1,7 @@
 import { Stack, Tabs } from "expo-router";
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { TabBarIcon } from "@/components/navigation/TabBarIcon";
-import { Colors } from "@/constants/Colors";
+
 import { useColorScheme } from "@/hooks/useColorScheme";
 import Home from "./index";
 import PastRides from "./past-rides";
@@ -22,7 +21,26 @@ export default function TabLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: {
+            borderTopWidth: 0,
+            backgroundColor:
+              colorScheme === "dark"
+                ? DarkTheme.colors.background
+                : DefaultTheme.colors.background,
+          },
+          tabBarActiveTintColor:
+            colorScheme === "dark"
+              ? DarkTheme.colors.primary
+              : DefaultTheme.colors.primary,
+          tabBarInactiveTintColor:
+            colorScheme === "dark"
+              ? DarkTheme.colors.text
+              : DefaultTheme.colors.text,
+        }}
+      >
         <Tab.Screen
           name="Home"
           component={Home}
