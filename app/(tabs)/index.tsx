@@ -103,7 +103,7 @@ export default function Home() {
                     className="p-0.5"
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0, y: 1 }}
-                    style={{ borderRadius: 6, flexBasis: "48%", flexGrow: 1 }} // Utilize flexGrow para garantir que o espaço seja distribuído
+                    style={{ borderRadius: 6, flexBasis: "48%", flexGrow: 1 }}
                     colors={
                       ride.key === 0
                         ? ["#555555", "#AE0AF2"]
