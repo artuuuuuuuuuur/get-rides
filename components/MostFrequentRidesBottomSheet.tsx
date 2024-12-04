@@ -16,6 +16,9 @@ function MostFrequentRidesBottomSheet() {
   // callbacks
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
+    if (index == -1) {
+      index++;
+    }
   }, []);
 
   return (
@@ -38,7 +41,7 @@ function MostFrequentRidesBottomSheet() {
         width: 100,
       }}
       handleStyle={{ paddingTop: 20, paddingBottom: 20 }}
-      style={{paddingBottom: 10}}
+      style={{ paddingBottom: 10 }}
     >
       <ThemedView>
         <BottomSheetView>
